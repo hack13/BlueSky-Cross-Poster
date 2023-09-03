@@ -1,0 +1,7 @@
+mastodon.py
+atproto
+bs4
+requests
+flask
+python-dotenv
+cryptography
