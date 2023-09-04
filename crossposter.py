@@ -110,7 +110,13 @@ def atProtoPost(actor, actorPass, post):
         if index == 0:
             # If post contains no embed, post it
             if convertPost["embed"]["images"] == None:
-                rootPost = agent.send_post(chunk)
+                rootPost = agent.com.atproto.repo.create_record(
+                    models.ComAtprotoRepoCreateRecord.Data(
+                        repo=agent.me.did,
+                        collection=models.ids.AppBskyFeedPost,
+                        record=models.AppBskyFeedPost.Main(createdAt=getCurrentTimestamp(), text=chunk)
+                    )
+                )
             else:
                 # If post contains embed, if an image we can just post it
                 if convertPost["embed"]["images"][0]["type"] == 'image':
@@ -129,7 +135,13 @@ def atProtoPost(actor, actorPass, post):
                     # Create the embed data
                     embedData = models.AppBskyEmbedImages.Main(images=images)
                     try:
-                        rootPost = agent.send_post(chunk, embed=embedData) # Post the status with the embed
+                        rootPost = agent.com.atproto.repo.create_record(
+                            models.ComAtprotoRepoCreateRecord.Data(
+                                repo=agent.me.did,
+                                collection=models.ids.AppBskyFeedPost,
+                                record=models.AppBskyFeedPost.Main(createdAt=getCurrentTimestamp(), embed=embedData, text=chunk)
+                            )
+                        )
                     except Exception as e:
                         print(e)
                 # If we are video, since Bsky has no support for video we will just post the link using the external embed
