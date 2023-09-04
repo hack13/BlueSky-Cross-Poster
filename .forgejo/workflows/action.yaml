@@ -1,7 +1,11 @@
 on: [push]
 jobs:
   test:
-    runs-on: self-hosted
+    runs-on: docker
+    container:
+      image: quay.io/containers/podman:latest
     steps:
-      - uses: https://code.forgejo.org/actions/checkout@v3
-      - run: podman build . -t myimage
+      - uses: actions/checkout@v3
+      - run: podman build . -t git.hack113.dev/bluesky-cross-poster:latest
+      - run: podman login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} git.hack113.dev
+      - run: podman push git.hack113.dev/bluesky-cross-poster:latest
