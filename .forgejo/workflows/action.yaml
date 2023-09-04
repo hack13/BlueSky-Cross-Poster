@@ -4,6 +4,7 @@ jobs:
     runs-on: docker
     steps:
       - name: Install Buildah
+        run: apt-get update
         run: apt-get -y install buildah
 
       - name: Checkout
