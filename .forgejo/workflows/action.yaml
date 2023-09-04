@@ -18,7 +18,8 @@ jobs:
         with:
           image: bluesky-cross-poster
           tags: latest
-          containerfile: Dockerfile .
+          containerfile: |
+            ./Containerfile
 
       - name: Push
         id: push-to-registry
