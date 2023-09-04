@@ -2,10 +2,24 @@ on: [push]
 jobs:
   test:
     runs-on: docker
-    container:
-      image: quay.io/containers/podman:latest
     steps:
-      - uses: actions/checkout@v3
-      - run: podman build . -t git.hack113.dev/bluesky-cross-poster:latest
-      - run: podman login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} git.hack113.dev
-      - run: podman push git.hack113.dev/bluesky-cross-poster:latest
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build
+        id: build_image
+        uses: https://github.com/redhat-actions/buildah-build@v2
+        with:
+          image: bluesky-cross-poster
+          tags: latest
+          containerfile: Dockerfile
+
+      - name: Push
+        id: push-to-registry
+        uses: https://github.com/redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build_image.outputs.image }}
+          tags: ${{ steps.build_image.outputs.tags }}
+          registry: git.hack13.dev
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
