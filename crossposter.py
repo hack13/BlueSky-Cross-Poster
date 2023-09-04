@@ -238,6 +238,7 @@ def getATPosts():
             else:
                 print('No new posts.')  # If not from the user, do nothing
         updateLastRun(user[0], timestamp)  # Update the last run time for the user
+    return 'success'
 
 # Collect posts from Mastodon
 def getMastoPosts():
@@ -274,6 +275,7 @@ def getMastoPosts():
                 # If the post is not new, do nothing
                 print('No new posts.')
         updateLastRun(user[0], timestamp, 'mastodon')  # Update the last run time for the user
+    return 'success'
 
 # Post to Mastodon
 def postToMasto():
@@ -285,8 +287,9 @@ def postToMasto():
             try:
                 mastodonPost(userToken, user[4], post[3])
                 deleteATPost(post[0])
+                return 'success'
             except:
-                print('Error posting to Mastodon.')
+                return 'Error posting to Mastodon.'
 
 # Post to AT Proto
 def postToAtproto():
@@ -297,6 +300,7 @@ def postToAtproto():
         for post in listofPosts:
             try:
                 atProtoPost(user[1], appPass, post[3])
-                #deleteMastodonPost(post[0])
+                deleteMastodonPost(post[0])
+                return 'success'
             except:
-                print('Error posting to AT Proto.')
+                return 'Error posting to AT Proto.'
