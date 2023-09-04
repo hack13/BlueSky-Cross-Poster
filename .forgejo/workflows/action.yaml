@@ -18,7 +18,7 @@ jobs:
         with:
           image: bluesky-cross-poster
           tags: latest
-          containerfile: |
+          containerfiles: |
             ./Containerfile
 
       - name: Push
