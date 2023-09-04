@@ -1,7 +1,7 @@
 on: [push]
 jobs:
   test:
-    runs-on: podman
+    runs-on: docker
     container:
       image: quay.io/containers/podman:latest
     steps:
