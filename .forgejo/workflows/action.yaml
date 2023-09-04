@@ -3,6 +3,9 @@ jobs:
   test:
     runs-on: docker
     steps:
+      - name: Install Buildah
+        run: sudo apt-get -y install buildah
+
       - name: Checkout
         uses: actions/checkout@v3
 
