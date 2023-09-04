@@ -3,8 +3,10 @@ jobs:
   test:
     runs-on: docker
     steps:
-      - name: Install Buildah
+      - name: Install Refresh Packages
         run: apt-get update
+
+      - name: Install Buildah
         run: apt-get -y install buildah
 
       - name: Checkout
