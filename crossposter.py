@@ -32,6 +32,11 @@ def getCurrentTimestamp():
     return datetime.datetime.now(datetime.timezone.utc).replace(
         tzinfo=None).isoformat() + 'Z'
 
+# Check user exists in the database
+def findUser(atproto_user):
+    user = checkUser(atproto_user)
+    return user
+
 # Split long posts into chunks
 def split_string_into_chunks(long_string, limit=300):
     chunks = []
@@ -186,31 +191,25 @@ def getMastoFeed(mastoToken, mastoUri, limit):
         mastodonUserID, exclude_replies=True, exclude_reblogs=True, limit=limit)
     return feed
 
-
-# Take in the arguments
-operation = sys.argv[1]
-# Build Database
-if operation == 'init':
-    createDatabase()  # Create the database
-    print('Database created.')  # Print that the database was created
 # Add user to database
-elif operation == 'addUser':
-    # Get the user data
-    atProtoUser = str(input('Enter AT Proto username: '))
-    atProtoPass = str(input('Enter AT Proto App password: '))
-    mastodonToken = str(input('Enter Mastodon access token: '))
-    mastodonUri = str(input('Enter Mastodon instance URI: '))
-    # Timestamp
-    timeNow = datetime.datetime.now(datetime.timezone.utc).replace(
-        tzinfo=None).isoformat() + 'Z'
-    # Encrypt the tokens
-    encMastoToken = Fernet(key).encrypt(mastodonToken.encode())
-    encProtoPass = Fernet(key).encrypt(atProtoPass.encode())
-    # Add the user to the database
-    addUser(atProtoUser, encProtoPass, encMastoToken, mastodonUri, timeNow, timeNow)
-    print('User added.')
+def createUser(atProtoUser, atProtoPass, mastodonToken, mastodonUri):
+    # Check if the user already exists
+    user = findUser(atProtoUser)
+    if user != None:
+        return 'User already exists'
+    else:
+        # Timestamp
+        timeNow = getCurrentTimestamp()
+        # Encrypt the tokens
+        encMastoToken = Fernet(key).encrypt(mastodonToken.encode())
+        encProtoPass = Fernet(key).encrypt(atProtoPass.encode())
+        # Add the user to the database
+        addUser(atProtoUser, encProtoPass, encMastoToken, mastodonUri, timeNow, timeNow)
+        # Return a message
+        return 'success'
+
 # Collect posts from AT Proto
-elif operation == 'getATPosts':
+def getATPosts():
     users = getUsers()
     timestamp = getCurrentTimestamp()
     for user in users:
@@ -236,12 +235,12 @@ elif operation == 'getATPosts':
                         print('No new posts.')
                 else:
                     print('Post is a reply.')
-
             else:
                 print('No new posts.')  # If not from the user, do nothing
         updateLastRun(user[0], timestamp)  # Update the last run time for the user
+
 # Collect posts from Mastodon
-elif operation == 'getMastoPosts':
+def getMastoPosts():
     users = getUsers()
     timestamp = getCurrentTimestamp()
     for user in users:
@@ -275,8 +274,9 @@ elif operation == 'getMastoPosts':
                 # If the post is not new, do nothing
                 print('No new posts.')
         updateLastRun(user[0], timestamp, 'mastodon')  # Update the last run time for the user
+
 # Post to Mastodon
-elif operation == 'postToMastodon':
+def postToMasto():
     users = getUsers()
     for user in users:
         userToken = Fernet(key).decrypt(user[3]).decode()
@@ -287,8 +287,9 @@ elif operation == 'postToMastodon':
                 deleteATPost(post[0])
             except:
                 print('Error posting to Mastodon.')
+
 # Post to AT Proto
-elif operation == 'postToAtproto':
+def postToAtproto():
     users = getUsers()
     for user in users:
         appPass = Fernet(key).decrypt(user[2]).decode()
@@ -299,7 +300,3 @@ elif operation == 'postToAtproto':
                 #deleteMastodonPost(post[0])
             except:
                 print('Error posting to AT Proto.')
-# Create Fernet key
-elif operation == 'createkey':
-    key = Fernet.generate_key()
-    print(key)

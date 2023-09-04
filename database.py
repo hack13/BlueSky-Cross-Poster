@@ -1,22 +1,25 @@
 import sqlite3
 
-conn = sqlite3.connect('crossposter.db')
-
+conn = sqlite3.connect('crossposter.db', check_same_thread=False)
 cursor = conn.cursor()
 
-# Create the database if it doesn't exist
-def createDatabase():
-    # Table of users for crossposting
-    cursor.execute('''CREATE TABLE IF NOT EXISTS crosspost_users
-                    (id INTEGER PRIMARY KEY, atproto_user TEXT, atproto_app_pass TEXT, 
-                    mastodon_access_token TEXT, mastodon_uri TEXT, at_last_run TEXT, mastodon_last_run TEXT)''')
-    # Table of posts for mastodon crossposting
-    cursor.execute('''CREATE TABLE IF NOT EXISTS at_posts
-                    (id INTEGER PRIMARY KEY, userID INTEGER, createdAt TEXT, at_post BLOB)''')
-    # Table of posts for at crossposting
-    cursor.execute('''CREATE TABLE IF NOT EXISTS mastodon_posts
-                    (id INTEGER PRIMARY KEY, userID INTEGER, createdAt TEXT, mastodon_post BLOB)''')
-    conn.commit()  # Submit changes to database
+# Table of users for crossposting
+cursor.execute('''CREATE TABLE IF NOT EXISTS crosspost_users
+                (id INTEGER PRIMARY KEY, atproto_user TEXT, atproto_app_pass TEXT, 
+                mastodon_access_token TEXT, mastodon_uri TEXT, at_last_run TEXT, mastodon_last_run TEXT)''')
+# Table of posts for mastodon crossposting
+cursor.execute('''CREATE TABLE IF NOT EXISTS at_posts
+                (id INTEGER PRIMARY KEY, userID INTEGER, createdAt TEXT, at_post BLOB)''')
+# Table of posts for at crossposting
+cursor.execute('''CREATE TABLE IF NOT EXISTS mastodon_posts
+                (id INTEGER PRIMARY KEY, userID INTEGER, createdAt TEXT, mastodon_post BLOB)''')
+conn.commit()  # Submit changes to database
+
+# Check if user exists in the database
+def checkUser(atproto_user):
+    user = cursor.execute('''SELECT * FROM crosspost_users WHERE atproto_user = ?''', (atproto_user,))
+    user = cursor.fetchone()
+    return user
 
 # Add a user to the database
 def addUser(atproto_user, atproto_app_pass, mastodon_access_token, mastodon_uri, timeNow, timeNow2):
