@@ -2,6 +2,8 @@ on: [push]
 jobs:
   test:
     runs-on: docker
+    container:
+      image: buildpack-deps:stable
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -23,4 +25,4 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: git.hack13.dev/bluesky-cross-poster:latest
+          tags: bluesky-cross-poster:latest
