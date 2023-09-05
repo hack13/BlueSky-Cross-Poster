@@ -3,7 +3,7 @@ jobs:
   test:
     runs-on: docker
     container:
-      options: --privileged -v /var/run/docker.sock:/var/run/docker.sock
+      options: --privileged
     steps:
       - name: Update Packages
         run: apt-get update -y
@@ -20,6 +20,7 @@ jobs:
         with:
           image: bluesky-cross-poster
           tags: latest
+          extra-args: --isolation=chroot
           containerfiles: |
             ./Dockerfile
 
