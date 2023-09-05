@@ -9,7 +9,7 @@ jobs:
         run: apt-get update -y
 
       - name: Build Image
-        run: apt-get install -y buildah
+        run: apt-get install -y buildah podman
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -20,7 +20,7 @@ jobs:
         with:
           image: bluesky-cross-poster
           tags: latest
-          extra-args: --isolation=chroot --security-opt seccomp=/usr/share/containers/seccomp.json
+          extra-args: --isolation=chroot
           containerfiles: |
             ./Dockerfile
 
