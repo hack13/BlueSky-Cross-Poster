@@ -3,7 +3,7 @@ jobs:
   test:
     runs-on: docker
     container:
-      options: --privileged
+      options: --privileged -v /var/run/docker.sock:/var/run/docker.sock
     steps:
       - name: Update Packages
         run: apt-get update -y
