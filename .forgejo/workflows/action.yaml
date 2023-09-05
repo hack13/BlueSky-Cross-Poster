@@ -20,7 +20,7 @@ jobs:
         with:
           image: bluesky-cross-poster
           tags: latest
-          extra-args: --isolation=chroot
+          extra-args: --isolation=chroot --security-opt seccomp=unconfined
           containerfiles: |
             ./Dockerfile
 
