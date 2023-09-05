@@ -3,6 +3,12 @@ jobs:
   test:
     runs-on: docker
     steps:
+      - name: Update Packages
+        run: apt-get update -y
+
+      - name: Build Image
+        run: apt-get install -y buildah
+
       - name: Checkout
         uses: actions/checkout@v3
 
