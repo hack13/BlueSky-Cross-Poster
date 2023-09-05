@@ -2,6 +2,8 @@ on: [push]
 jobs:
   test:
     runs-on: docker
+    container:
+      options: --privileged
     steps:
       - name: Update Packages
         run: apt-get update -y
