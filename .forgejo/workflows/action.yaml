@@ -3,6 +3,7 @@ jobs:
   test:
     runs-on: docker
     container:
+      image: docker:dind
       options: --privileged
     steps:
       - name: Update Packages
