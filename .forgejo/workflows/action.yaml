@@ -22,3 +22,5 @@ jobs:
         with:
           push: true
           tags: git.hack13.dev/bluesky-cross-poster:latest
+          secrets: |
+            GIT_AUTH_TOKEN=${{ secrets.DOCKER_PASSWORD }}   
