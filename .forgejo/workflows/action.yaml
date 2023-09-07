@@ -6,9 +6,6 @@ jobs:
       image: docker:dind
       options: --privileged
     steps:
-      - name: Update Packages
-        run: apt-get update -y
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
