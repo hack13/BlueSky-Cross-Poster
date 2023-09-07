@@ -3,7 +3,7 @@ jobs:
   test:
     runs-on: docker
     container:
-      image: docker:dind
+      image: catthehacker/ubuntu:act-latest
       options: --privileged
     steps:
       - name: Set up Docker Buildx
