@@ -3,7 +3,7 @@ jobs:
   test:
     runs-on: docker
     container:
-      options: --privileged --user 1000
+      options: --privileged
     steps:
       - name: Update Packages
         run: apt-get update -y
